@@ -10,10 +10,8 @@ export default function Home() {
   const sendMessage = async () => {
     if (!input.trim()) return;
 
-    // ユーザーメッセージを追加
     setMessages((prev) => [...prev, { from: "user", text: input }]);
 
-    // APIにPOST
     const res = await fetch("/api/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -21,7 +19,6 @@ export default function Home() {
     });
     const data = await res.json();
 
-    // AIの返信をチャットに追加
     if (res.ok) {
       setMessages((prev) => [...prev, { from: "bot", text: data.reply }]);
     } else {
@@ -33,7 +30,6 @@ export default function Home() {
     setInput("");
   };
 
-  // Enterキーで送信（変換中は無効）
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && !isComposing) {
       e.preventDefault();
@@ -49,11 +45,11 @@ export default function Home() {
           border: "1px solid #ccc",
           padding: 10,
           minHeight: 200,
+          maxHeight: 700,        // 最大高さを指定して
           marginBottom: 10,
           borderRadius: 8,
           backgroundColor: "#f9f9f9",
-          overflowY: "auto",
-          maxHeight: 700,
+          overflowY: "auto",     // 高さ固定時はスクロール可能に
         }}
       >
         {messages.map((m, i) => (
@@ -86,8 +82,8 @@ export default function Home() {
           placeholder="メッセージを入力"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          onCompositionStart={() => setIsComposing(true)} // 変換開始
-          onCompositionEnd={() => setIsComposing(false)} // 変換終了
+          onCompositionStart={() => setIsComposing(true)}
+          onCompositionEnd={() => setIsComposing(false)}
           onKeyDown={handleKeyDown}
           style={{
             width: "80%",
