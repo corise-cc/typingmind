@@ -5,14 +5,15 @@ export default function Home() {
     { from: "bot", text: "こんにちは！チャットへようこそ！" },
   ]);
   const [input, setInput] = useState("");
+  const [isComposing, setIsComposing] = useState(false); // 日本語変換中フラグ
 
   const sendMessage = async () => {
     if (!input.trim()) return;
 
-    // ユーザーのメッセージをチャットに追加
+    // ユーザーメッセージを追加
     setMessages((prev) => [...prev, { from: "user", text: input }]);
 
-    // APIへPOST
+    // APIにPOST
     const res = await fetch("/api/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -20,7 +21,7 @@ export default function Home() {
     });
     const data = await res.json();
 
-    // AIの返答をチャットに追加
+    // AIの返信をチャットに追加
     if (res.ok) {
       setMessages((prev) => [...prev, { from: "bot", text: data.reply }]);
     } else {
@@ -29,8 +30,15 @@ export default function Home() {
         { from: "bot", text: "エラーが発生しました。" },
       ]);
     }
-
     setInput("");
+  };
+
+  // Enterキーで送信（変換中は無効）
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !isComposing) {
+      e.preventDefault();
+      sendMessage();
+    }
   };
 
   return (
@@ -41,12 +49,11 @@ export default function Home() {
           border: "1px solid #ccc",
           padding: 10,
           minHeight: 200,
-          maxHeight: 800,  // ここで最大高さを指定
-          height: "70vh",  // 画面高さの70%を目安に
           marginBottom: 10,
           borderRadius: 8,
           backgroundColor: "#f9f9f9",
-          overflowY: "auto",  // 縦スクロールを有効に
+          overflowY: "auto",
+          maxHeight: 700,
         }}
       >
         {messages.map((m, i) => (
@@ -73,15 +80,17 @@ export default function Home() {
           </div>
         ))}
       </div>
-      <div style={{ display: "flex", alignItems: "center" }}>
+      <div>
         <input
           type="text"
           placeholder="メッセージを入力"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+          onCompositionStart={() => setIsComposing(true)} // 変換開始
+          onCompositionEnd={() => setIsComposing(false)} // 変換終了
+          onKeyDown={handleKeyDown}
           style={{
-            width: "calc(100% - 80px)",  // ボタン分の幅を除外
+            width: "80%",
             padding: 8,
             borderRadius: 4,
             border: "1px solid #ccc",
@@ -89,11 +98,7 @@ export default function Home() {
         />
         <button
           onClick={sendMessage}
-          style={{
-            width: 70,
-            padding: "8px 16px",
-            marginLeft: 8,
-          }}
+          style={{ padding: "8px 16px", marginLeft: 8 }}
         >
           送信
         </button>
