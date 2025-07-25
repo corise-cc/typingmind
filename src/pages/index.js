@@ -5,7 +5,7 @@ export default function Home() {
     { from: "bot", text: "こんにちは！チャットへようこそ！" },
   ]);
   const [input, setInput] = useState("");
-  const [isComposing, setIsComposing] = useState(false); // 日本語変換中フラグ
+  const [isComposing, setIsComposing] = useState(false);
 
   const sendMessage = async () => {
     if (!input.trim()) return;
@@ -38,18 +38,29 @@ export default function Home() {
   };
 
   return (
-    <div style={{ maxWidth: 600, margin: "auto", padding: 20 }}>
-      <h1>簡易チャットUIテスト</h1>
+    <div
+      style={{
+        maxWidth: 600,
+        margin: "40px auto",
+        padding: 20,
+        fontFamily: "'Noto Sans JP', sans-serif",
+        color: "#333",
+      }}
+    >
+      <h1 style={{ textAlign: "center", color: "#e65c26", marginBottom: 20 }}>
+        簡易チャットUIテスト
+      </h1>
+
       <div
         style={{
-          border: "1px solid #ccc",
-          padding: 10,
-          minHeight: 200,
-          maxHeight: 700,        // 最大高さを指定して
-          marginBottom: 10,
-          borderRadius: 8,
-          backgroundColor: "#f9f9f9",
-          overflowY: "auto",     // 高さ固定時はスクロール可能に
+          border: "1px solid #e65c26",
+          padding: 20,
+          minHeight: 300,
+          maxHeight: 700,
+          borderRadius: 12,
+          backgroundColor: "#f7f7f7",
+          overflowY: "auto",
+          boxShadow: "0 0 8px rgba(230, 92, 38, 0.2)",
         }}
       >
         {messages.map((m, i) => (
@@ -57,18 +68,20 @@ export default function Home() {
             key={i}
             style={{
               textAlign: m.from === "user" ? "right" : "left",
-              margin: "6px 0",
+              margin: "10px 0",
             }}
           >
             <span
               style={{
                 display: "inline-block",
-                padding: "8px 12px",
-                borderRadius: 20,
-                backgroundColor: m.from === "user" ? "#7db9ff" : "#ddd",
-                color: m.from === "user" ? "white" : "black",
-                maxWidth: "70%",
+                padding: "10px 18px",
+                borderRadius: 24,
+                backgroundColor: m.from === "user" ? "#e65c26" : "#ddd",
+                color: m.from === "user" ? "white" : "#333",
+                maxWidth: "75%",
                 wordWrap: "break-word",
+                fontSize: 16,
+                lineHeight: 1.4,
               }}
             >
               {m.text}
@@ -76,7 +89,8 @@ export default function Home() {
           </div>
         ))}
       </div>
-      <div>
+
+      <div style={{ marginTop: 20, display: "flex", gap: 10 }}>
         <input
           type="text"
           placeholder="メッセージを入力"
@@ -86,15 +100,33 @@ export default function Home() {
           onCompositionEnd={() => setIsComposing(false)}
           onKeyDown={handleKeyDown}
           style={{
-            width: "80%",
-            padding: 8,
-            borderRadius: 4,
-            border: "1px solid #ccc",
+            flex: 1,
+            padding: "12px 16px",
+            borderRadius: 24,
+            border: "1.5px solid #e65c26",
+            fontSize: 16,
+            outline: "none",
           }}
         />
         <button
           onClick={sendMessage}
-          style={{ padding: "8px 16px", marginLeft: 8 }}
+          style={{
+            backgroundColor: "#e65c26",
+            color: "white",
+            border: "none",
+            borderRadius: 24,
+            padding: "12px 24px",
+            fontWeight: "bold",
+            cursor: "pointer",
+            fontSize: 16,
+            transition: "background-color 0.3s ease",
+          }}
+          onMouseEnter={(e) =>
+            (e.currentTarget.style.backgroundColor = "#cf4f21")
+          }
+          onMouseLeave={(e) =>
+            (e.currentTarget.style.backgroundColor = "#e65c26")
+          }
         >
           送信
         </button>
