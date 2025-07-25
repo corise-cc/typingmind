@@ -76,7 +76,7 @@ export default function Home() {
           letterSpacing: 1,
         }}
       >
-        簡易チャットUIテスト
+        CORISEチャット
       </h1>
 
       <div
