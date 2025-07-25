@@ -5,6 +5,7 @@ export default function Home() {
     { from: "bot", text: "こんにちは！チャットへようこそ！" },
   ]);
   const [input, setInput] = useState("");
+  const [isComposing, setIsComposing] = useState(false); // 日本語入力確定中の状態管理
 
   const sendMessage = async () => {
     if (!input.trim()) return;
@@ -29,6 +30,7 @@ export default function Home() {
         { from: "bot", text: "エラーが発生しました。" },
       ]);
     }
+
     setInput("");
   };
 
@@ -40,10 +42,11 @@ export default function Home() {
           border: "1px solid #ccc",
           padding: 10,
           minHeight: 200,
+          maxHeight: 400, // 最大高さを設定
           marginBottom: 10,
           borderRadius: 8,
           backgroundColor: "#f9f9f9",
-          overflowY: "auto",
+          overflowY: "auto", // 縦スクロールを有効化
         }}
       >
         {messages.map((m, i) => (
@@ -70,16 +73,31 @@ export default function Home() {
           </div>
         ))}
       </div>
+
       <div>
         <input
           type="text"
           placeholder="メッセージを入力"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-          style={{ width: "80%", padding: 8, borderRadius: 4, border: "1px solid #ccc" }}
+          onCompositionStart={() => setIsComposing(true)} // 日本語入力開始
+          onCompositionEnd={() => setIsComposing(false)} // 日本語入力確定
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !isComposing) {
+              sendMessage();
+            }
+          }}
+          style={{
+            width: "80%",
+            padding: 8,
+            borderRadius: 4,
+            border: "1px solid #ccc",
+          }}
         />
-        <button onClick={sendMessage} style={{ padding: "8px 16px", marginLeft: 8 }}>
+        <button
+          onClick={sendMessage}
+          style={{ padding: "8px 16px", marginLeft: 8 }}
+        >
           送信
         </button>
       </div>
